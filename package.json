@@ -1,17 +1,38 @@
 {
   "name": "easy_note",
+  "productNam": "EasyNote",
   "version": "1.0.0",
   "scripts": {
     "build:dev": "cross-env NODE_ENV=development webpack",
     "build": "cross-env NODE_ENV=production webpack",
     "watch": "cross-env NODE_ENV=development webpack --watch",
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder --win --mac --x64"
   },
   "main": "build/app.js",
   "keywords": [],
-  "author": "",
+  "author": "honchy@outlook.com",
   "license": "ISC",
-  "description": "",
+  "description": "easynote webpack template",
+  "build": {
+    "files": [
+      "build/**",
+      "assets/**",
+      "package.json"
+    ],
+    "asar": true,
+    "appId": "cn.honchy.easynote",
+    "mac": {
+      "target": [
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "zip"
+      ]
+    }
+  },
   "devDependencies": {
     "clean-webpack-plugin": "^2.0.1",
     "cross-env": "^5.2.0",
