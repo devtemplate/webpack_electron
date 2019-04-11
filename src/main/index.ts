@@ -1,10 +1,8 @@
-import { app, BrowserWindow, protocol, InterceptBufferProtocolRequest } from 'electron';
+import { app, BrowserWindow, protocol, InterceptBufferProtocolRequest, BrowserView, WebPreferences } from 'electron';
 import { join } from 'path';
 import { parse } from 'url';
 import { readFile } from 'fs';
 import precachelist from './define';
-
-console.log('precachelist', precachelist);
 
 function resolveCache(pathname) {
   // 基于 build 目录计算
@@ -35,12 +33,17 @@ function withCache(request: InterceptBufferProtocolRequest, callback: (steam: Bu
           // TODO: should show 404?
           console.log('error', error);
         }
-
         callback(Buffer.from(data));
       }
     );
   }
 }
+
+const defaultSecurityWebPreferences: WebPreferences = {
+  nodeIntegration: false,
+  nodeIntegrationInSubFrames: false,
+  nodeIntegrationInWorker: false
+};
 
 function createWindow() {
   protocol.interceptBufferProtocol('http', withCache);
@@ -50,15 +53,54 @@ function createWindow() {
   let win = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: defaultSecurityWebPreferences
+  });
+
+  let sideview = new BrowserView({
     webPreferences: {
       nodeIntegration: false,
+      nodeIntegrationInSubFrames: false,
       nodeIntegrationInWorker: false
     }
   });
+  sideview.webContents.loadURL('http://www.baidu.com/pages/app.html');
+  sideview.setAutoResize({ width: false, height: true });
+  win.addBrowserView(sideview);
+  // win.setBrowserView(sideview);
+  sideview.setBounds({ x: 0, y: 0, width: 120, height: 600 });
+
+  let contentview = new BrowserView({
+    webPreferences: defaultSecurityWebPreferences
+  });
+  contentview.webContents.loadURL('http://www.baidu.com/pages/app.html');
+  // contentview.setAutoResize({ width: true, height: true });
+  // win.addBrowserView(contentview);
+  win.addBrowserView(contentview);
+  contentview.setBounds({ x: 120, y: 0, width: 680, height: 500 });
+
+  let bottomView = new BrowserView({
+    webPreferences: defaultSecurityWebPreferences
+  });
+
+  bottomView.webContents.loadURL('http://www.baidu.com/pages/app.html');
+  // bottomView.setAutoResize({ width: true, height: false });
+  // win.addBrowserView(contentview);
+  bottomView.setBounds({ x: 120, y: 500, width: 680, height: 100 });
+  win.addBrowserView(bottomView);
+
+  win.on('resize', () => {
+    let bounds = win.getBounds();
+    contentview.setBounds({ x: 120, y: 0, width: bounds.width - 120, height: bounds.height - 100 });
+    bottomView.setBounds({ x: 120, y: bounds.height - 100, width: bounds.width - 120, height: 100 });
+  });
+  win.on('close', () => {
+    win = null;
+  });
+  console.log(win.getBrowserViews());
   // 分别构建 html 交给 renderer 构建，所以在目录层次上不能通过 require 接过来
   // 不过目录规律一定，可以通过约定的方式解决文件引入的问题
   // win.loadFile(resolvePageHtml('pages/app'));
-  win.loadURL('http://www.baidu.com/pages/app.html');
+  // win.loadURL('http://www.baidu.com/pages/app.html');
 }
 
 app.on('ready', createWindow);
