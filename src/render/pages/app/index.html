@@ -13,11 +13,40 @@
         height: 100%;
       }
       body {
-        border: 5px solid red;
+        outline: 1px solid red;
+      }
+      .app-layout {
+        display: flex;
+        height: 100%;
+        flex-direction: row;
+      }
+      .app-menu {
+        width: 120px;
+        align-self: stretch;
+      }
+      .app-wrapper {
+        flex: 1;
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+      }
+      .app-top {
+        height: 55px;
+      }
+      .app-content {
+        flex: 1;
       }
     </style>
   </head>
   <bod>
-    <p>hello world ss</p>
+    <div class="app-layout">
+      <div class="app-menu">
+        我是左侧菜单
+      </div>
+      <div class="app-wrapper">
+          <div class="app-top">我是窗口顶部工具栏</div>
+          <div class="app-content">我是内容区域</div>
+      </div>
+    </div>
   </body>
 </html>

@@ -3,6 +3,7 @@ import { join } from 'path';
 import { parse } from 'url';
 import { readFile } from 'fs';
 import precachelist from './define';
+import { WSAEINTR } from 'constants';
 
 function resolveCache(pathname) {
   // 基于 build 目录计算
@@ -57,41 +58,41 @@ function createWindow() {
     webPreferences: defaultSecurityWebPreferences
   });
 
-  let sideview = new BrowserView({
-    webPreferences: {
-      nodeIntegration: false,
-      nodeIntegrationInSubFrames: false,
-      nodeIntegrationInWorker: false
-    }
-  });
-  sideview.webContents.loadURL('http://www.baidu.com/pages/app.html');
-  sideview.setAutoResize({ width: false, height: true });
-  win.addBrowserView(sideview);
-  // win.setBrowserView(sideview);
-  sideview.setBounds({ x: 0, y: 0, width: 120, height: 600 });
+  // let sideview = new BrowserView({
+  //   webPreferences: {
+  //     nodeIntegration: false,
+  //     nodeIntegrationInSubFrames: false,
+  //     nodeIntegrationInWorker: false
+  //   }
+  // });
+  // sideview.webContents.loadURL('http://www.baidu.com/pages/app.html');
+  // sideview.setAutoResize({ width: false, height: true });
+  // win.addBrowserView(sideview);
+  // // win.setBrowserView(sideview);
+  // sideview.setBounds({ x: 0, y: 0, width: 120, height: 600 });
 
   let contentview = new BrowserView({
     webPreferences: defaultSecurityWebPreferences
   });
-  contentview.webContents.loadURL('http://www.baidu.com/pages/app.html');
+  contentview.webContents.loadURL('http://www.baidu.com/pages/editor.html');
   // contentview.setAutoResize({ width: true, height: true });
-  // win.addBrowserView(contentview);
+  // win.setBrowserView(contentview);
   win.addBrowserView(contentview);
-  contentview.setBounds({ x: 120, y: 0, width: 680, height: 500 });
+  contentview.setBounds({ x: 120, y: 55, width: 680, height: 545 });
   
   // 因为有多个BrowserView，所以直接快捷键打开，有些问题，
   // TODO 找到更好的方式
   contentview.webContents.openDevTools();
 
-  let bottomView = new BrowserView({
-    webPreferences: defaultSecurityWebPreferences
-  });
+  // let bottomView = new BrowserView({
+  //   webPreferences: defaultSecurityWebPreferences
+  // });
 
-  bottomView.webContents.loadURL('http://www.baidu.com/pages/app.html');
-  // bottomView.setAutoResize({ width: true, height: false });
-  // win.addBrowserView(contentview);
-  bottomView.setBounds({ x: 120, y: 500, width: 680, height: 100 });
-  win.addBrowserView(bottomView);
+  // bottomView.webContents.loadURL('http://www.baidu.com/pages/app.html');
+  // // bottomView.setAutoResize({ width: true, height: false });
+  // // win.addBrowserView(contentview);
+  // bottomView.setBounds({ x: 120, y: 500, width: 680, height: 100 });
+  // win.addBrowserView(bottomView);
 
   contentview.webContents.on('dom-ready', () => {
     win.show();
@@ -101,8 +102,8 @@ function createWindow() {
   // })
   win.on('resize', () => {
     let bounds = win.getBounds();
-    contentview.setBounds({ x: 120, y: 0, width: bounds.width - 120, height: bounds.height - 100 });
-    bottomView.setBounds({ x: 120, y: bounds.height - 100, width: bounds.width - 120, height: 100 });
+    contentview.setBounds({ x: 120, y: 55, width: bounds.width - 120, height: bounds.height - 55 });
+    // bottomView.setBounds({ x: 120, y: bounds.height - 100, width: bounds.width - 120, height: 100 });
   });
 
   win.on('close', () => {
@@ -112,7 +113,7 @@ function createWindow() {
   // 分别构建 html 交给 renderer 构建，所以在目录层次上不能通过 require 接过来
   // 不过目录规律一定，可以通过约定的方式解决文件引入的问题
   // win.loadFile(resolvePageHtml('pages/app'));
-  // win.loadURL('http://www.baidu.com/pages/app.html');
+  win.loadURL('http://www.baidu.com/pages/app.html');
 }
 
 app.on('ready', createWindow);
