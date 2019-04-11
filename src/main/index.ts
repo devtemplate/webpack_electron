@@ -51,6 +51,7 @@ function createWindow() {
   // session.defaultSession.webRequest.onBeforeRequest(withCache);
 
   let win = new BrowserWindow({
+    show: false,
     width: 800,
     height: 600,
     webPreferences: defaultSecurityWebPreferences
@@ -77,6 +78,10 @@ function createWindow() {
   // win.addBrowserView(contentview);
   win.addBrowserView(contentview);
   contentview.setBounds({ x: 120, y: 0, width: 680, height: 500 });
+  
+  // 因为有多个BrowserView，所以直接快捷键打开，有些问题，
+  // TODO 找到更好的方式
+  contentview.webContents.openDevTools();
 
   let bottomView = new BrowserView({
     webPreferences: defaultSecurityWebPreferences
@@ -88,11 +93,18 @@ function createWindow() {
   bottomView.setBounds({ x: 120, y: 500, width: 680, height: 100 });
   win.addBrowserView(bottomView);
 
+  contentview.webContents.on('dom-ready', () => {
+    win.show();
+  });
+  // win.on('ready-to-show', () => {
+  //   win.show();
+  // })
   win.on('resize', () => {
     let bounds = win.getBounds();
     contentview.setBounds({ x: 120, y: 0, width: bounds.width - 120, height: bounds.height - 100 });
     bottomView.setBounds({ x: 120, y: bounds.height - 100, width: bounds.width - 120, height: 100 });
   });
+
   win.on('close', () => {
     win = null;
   });

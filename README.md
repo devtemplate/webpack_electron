@@ -9,4 +9,6 @@
 - assets 资源列表
 - build 最终构建产物
 
-# 
+# Next TODO
+
+- 引入WebComponents和Worker来隔离业务。采用WebComponents综合UI界面，采取Worker隔离运行环境。
