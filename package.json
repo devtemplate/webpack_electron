@@ -1,6 +1,6 @@
 {
-  "name": "easy_note",
-  "productNam": "EasyNote",
+  "name": "webpack_electron",
+  "productNam": "webpack electron template",
   "version": "1.0.0",
   "scripts": {
     "build:dev": "cross-env NODE_ENV=development webpack",
